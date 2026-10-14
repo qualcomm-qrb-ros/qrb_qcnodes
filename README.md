@@ -74,8 +74,10 @@ Test instructions are not ready yet.
 
 ## Contributing
 
-Contribution guidance is not ready yet for this initial release.
+Please read our [contributing guidelines](CONTRIBUTING.md) before submitting a pull request, and follow our [code of conduct](CODE-OF-CONDUCT.md). Commits must be signed off under the [DCO](http://developercertificate.org/).
+
+To report a potential security vulnerability, see [SECURITY.md](SECURITY.md).
 
 ## License
 
-This project is licensed under the BSD-3-Clause-Clear license.
+This project is licensed under the BSD-3-Clause-Clear license. See [LICENSE](LICENSE) for the full license text.
