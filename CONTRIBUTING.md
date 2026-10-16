@@ -10,7 +10,6 @@ All contributions are welcome, whether they are features, issues, documentation,
 - [Submission Guidelines](#submission)
 - [Contributing Guidelines](#guidelines)
 - [Commit Message Format](#commit)
-- [Security Analysis of Pull Requests](#secure-analysis)
 
 ## <a name="conduct"></a> Code of Conduct
 Please read and follow our [code of conduct](CODE-OF-CONDUCT.md).
@@ -194,16 +193,3 @@ Similarly, a Deprecation section should start with `DEPRECATED: ` followed by a 
 ### Revert
 
 If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit. In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
-
-
-## <a name="secure-analysis"></a>  Security Analysis of Pull Requests
-
-To maintain the security and integrity of this project, all pull requests from external contributors are automatically scanned using [Semgrep](https://github.com/semgrep/semgrep) to detect insecure coding patterns and potential security flaws.
-
-**Static Analysis with Semgrep:**  We use Semgrep to perform lightweight, fast static analysis on every PR. This helps identify risky code patterns and logic flaws early in the development process.
-
-**Contributor Responsibility:** If any issues are flagged, contributors are expected to resolve them before the PR can be merged.
-
-**Continuous Improvement:** Our Semgrep ruleset evolves over time to reflect best practices and emerging security concerns.
-
-By submitting a PR, you agree to participate in this process and help us keep the project secure for everyone.

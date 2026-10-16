@@ -107,13 +107,31 @@ propagated:
 
 ### Not included
 
-- **`.github/` directory.** The reference carries issue templates, a PR
-  template, and five workflows (commit-lint, cpp-code-style-checker,
-  action-lint, qcom-preflight-checks, stale-issues) that call shared
-  `qualcomm-qrb-ros/qrb_ros_gh_actions` reusable workflows. Note that
-  `CONTRIBUTING.md` references `issues/new?template=bug_report.yaml` and
-  `feature_request.yaml`, so those two links will 404 until the issue
-  templates are added. Worth a follow-up change.
+- **CI workflows.** Excluded by decision: the reference's five workflows
+  (commit-lint, cpp-code-style-checker, action-lint, qcom-preflight-checks,
+  stale-issues) call shared `qualcomm-qrb-ros/qrb_ros_gh_actions` reusable
+  workflows that assume a ROS/colcon package, so they cannot be reused on this
+  project. `dependabot.yaml` and `actionlint.yaml` are omitted for the same
+  reason.
+- **Semgrep section in `CONTRIBUTING.md`.** The reference's "Security Analysis
+  of Pull Requests" section tells contributors every PR is automatically
+  scanned with Semgrep and that they "agree to participate in this process."
+  With no CI, that scan would not run, so the claim is removed rather than
+  shipped as a false promise. Restore it if equivalent non-ROS CI is added
+  later.
+
+### Issue and PR templates
+
+`.github/ISSUE_TEMPLATE/bug_report.yaml`,
+`.github/ISSUE_TEMPLATE/feature_request.yaml` and
+`.github/PULL_REQUEST_TEMPLATE/pull_request_template.md` **are** included.
+These are plain GitHub issue forms with no ROS or CI coupling, and
+`CONTRIBUTING.md` already links to the two issue templates by filename — so
+adding them fixes links that would otherwise 404. Two adjustments to the PR
+template: the Test Configuration asks for a "Graph Framework / QCNode SDK
+version" instead of a bare "SDK", and the checklist gains an SPDX-header item
+while its style item now refers to surrounding code rather than project style
+guidelines (nothing enforces a formatter here).
 
 ## Verification
 
@@ -121,8 +139,10 @@ propagated:
 - All three tables have consistent pipe counts across header, separator, and
   body rows.
 - Both shields.io badge URLs return HTTP 200; the `logo=qualcomm` slug is valid.
-- All 8 `CONTRIBUTING.md` internal anchors resolve to defined `<a name=...>`
+- All 7 `CONTRIBUTING.md` internal anchors resolve to defined `<a name=...>`
   targets.
+- Both `?template=` issue-form links in `CONTRIBUTING.md` resolve to files
+  present under `.github/ISSUE_TEMPLATE/`.
 - Every cross-file link (`CONTRIBUTING.md`, `CODE-OF-CONDUCT.md`,
   `SECURITY.md`, `LICENSE`) points to a file that exists.
 - No placeholder or stale-reference strings remain across the committed
@@ -134,10 +154,6 @@ propagated:
 - Confirm the exact IQ-10 marketing string (house style elsewhere is
   "Qualcomm Dragonwing™ IQ-9075 EVK").
 - Supply a Graph Framework badge target URL, or drop that badge.
-- Add `.github/` issue templates — `CONTRIBUTING.md` links to
-  `bug_report.yaml` and `feature_request.yaml`, which 404 until they exist.
-- Add the `.github/workflows` CI jobs that call the shared
-  `qualcomm-qrb-ros/qrb_ros_gh_actions` reusable workflows.
 - Fill the `Sensor interface` column once the IMU and Lidar nodes land, and
   revisit the `Processor` column if any node offloads beyond CPU.
 - Add the architecture diagram to `assets/` and embed it in Overview.
