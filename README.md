@@ -39,7 +39,7 @@ Installation, build, runtime, and test workflows are not ready yet.
 
 Every node in this repository implements `QCNodeIfs`, and exposes configuration and monitoring through `QCNodeConfigIfs` and `QCNodeMonitoringIfs`. The Graph Framework creates each node through a `NodeFactoryFn`-compatible factory and drives it through `Initialize()`, `Start()`, `ProcessFrameDescriptor()`, `Stop()`, and `DeInitialize()`.
 
-The extension-point interfaces are declared in `include/QC/Node/Ifs/`, and each node exposes its configuration struct and factory entry point through a public header in `include/QC/Node/`.
+The extension-point interfaces are declared under `include/QC/Node/`, alongside the per-node public headers through which each node exposes its configuration struct and factory entry point.
 
 | Component | Responsibility |
 | --- | --- |
