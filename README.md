@@ -12,11 +12,13 @@
 
 [QRB QCNodes](https://github.com/qualcomm-qrb-ros/qrb_qcnodes) provides sensor QCNodes for the Qualcomm Graph Framework. Each node implements the standard `QCNodeIfs` extension point, so the Graph Framework owns scheduling, threads, frame descriptors, and buffer lifetime, while the node handles sensor acquisition and conversion into Contract payloads.
 
-The repository is organized as one directory per node, plus shared code:
+The repository is organized as one directory per node under `source/Node/`, plus shared code:
 
-- `common`: sensor-independent helpers shared by all nodes — configuration parsing, monitoring counters, and buffer utilities.
-- `imu`: IMU QCNode. Acquires inertial samples and publishes them as frames.
-- `lidar`: Lidar QCNode. Acquires scans and publishes them as point cloud frames.
+- `source/Node/common`: sensor-independent helpers shared by all nodes — configuration parsing, monitoring counters, and buffer utilities.
+- `source/Node/imu`: IMU QCNode. Acquires inertial samples and publishes them as frames.
+- `source/Node/lidar`: Lidar QCNode. Acquires scans and publishes them as point cloud frames.
+
+Public headers are installed from `include/QC/`, and tests live under `tests/`. See [directory structure](docs/directory-structure.md) for the full layout and for what belongs in each directory.
 
 Additional sensor nodes will be added to this repository over time.
 
@@ -37,11 +39,13 @@ Installation, build, runtime, and test workflows are not ready yet.
 
 Every node in this repository implements `QCNodeIfs`, and exposes configuration and monitoring through `QCNodeConfigIfs` and `QCNodeMonitoringIfs`. The Graph Framework creates each node through a `NodeFactoryFn`-compatible factory and drives it through `Initialize()`, `Start()`, `ProcessFrameDescriptor()`, `Stop()`, and `DeInitialize()`.
 
+The extension-point interfaces are declared in `include/QC/Node/Ifs/`, and each node exposes its configuration struct and factory entry point through a public header in `include/QC/Node/`.
+
 | Component | Responsibility |
 | --- | --- |
-| `common` | Shared configuration parsing, monitoring counters, and buffer helpers. |
-| `imu` | Acquires inertial samples and converts them into Contract payloads. |
-| `lidar` | Acquires scans and converts them into point cloud Contract payloads. |
+| `source/Node/common` | Shared configuration parsing, monitoring counters, and buffer helpers. |
+| `source/Node/imu` | Acquires inertial samples and converts them into Contract payloads. |
+| `source/Node/lidar` | Acquires scans and converts them into point cloud Contract payloads. |
 
 Below is a summary of the currently planned nodes.
 
