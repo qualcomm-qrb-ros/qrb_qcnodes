@@ -38,16 +38,35 @@ qrb_qcnodes/
 ## Build files
 
 Every directory that holds buildable content carries its own `CMakeLists.txt`
-and is pulled in by an `add_subdirectory()` from its parent. The top-level
-`CMakeLists.txt` is the entry point: it always descends into `source/`, and
-descends into `tests/` only when `QRB_QCNODES_BUILD_TESTS` is `ON`.
+and is pulled in by an `add_subdirectory()` from its parent.
+
+This repository is built as a submodule of the QcNode project, which pulls the
+top-level `CMakeLists.txt` in with `add_subdirectory()` and supplies
+`project()`, the toolchain and the C++ standard. There is deliberately no
+`project()` call here, which fixes what the two root variables mean:
+
+| Variable | Refers to |
+| --- | --- |
+| `PROJECT_SOURCE_DIR` | the QcNode tree — `gtest`, `tests/utils` |
+| `QRB_QCNODES_ROOT` | this repository — its own headers and sources |
+
+`tests/` is added unconditionally. Each leaf test directory guards itself with
+`if( NOT TARGET <node library> ) return() endif()`, so a configuration that
+does not build a given node drops that node's tests instead of failing to
+link. The same guard is what lets this repository still configure on its own,
+with every test dropping out.
+
+Because the tests guard on the node library's target name, renaming a target
+in `source/Node/` silently drops its tests. The expected names are
+`QCNodeImu` and `QCNodeLidar`.
 
 `docs/` and `include/` carry no `CMakeLists.txt`. They hold nothing buildable,
 and the public headers reach consumers through the include directories of the
 targets that install them.
 
-The leaf build files are placeholders holding only a comment, so the tree
-configures and builds cleanly as it stands while producing no targets.
+Apart from the unit test described below, the leaf build files are placeholders
+holding only a comment, so the tree configures and builds cleanly as it stands
+while producing no targets.
 
 ## docs
 
@@ -105,3 +124,30 @@ the `CMakeLists.txt` of its parent.
   `gtest_<unit under test>.cpp`. Mocks and stubs that stand in for the
   `source/Library/` wrappers live in a `Mock/` subdirectory of the test
   directory that uses them, so tests run on the host without hardware.
+
+### The unit test template
+
+`tests/unit_test/Node/lidar/` is filled in as the layout to copy when adding
+tests for another node. It holds two files: a `CMakeLists.txt` with the target
+guard, the `HEADERS_DIR` list, one `add_executable()` and an
+`install(TARGETS ... DESTINATION bin)`; and a `gtest_NodeLidar.cpp` with one
+passing case, commented skeletons for the suites a node test usually carries,
+and its own `main()`.
+
+Three conventions in there are easy to get wrong.
+
+**`gtest_main` is not linked.** Each test file carries its own `main()` wrapped
+in `#ifndef GTEST_QCNODE`, so the same source can either build as a standalone
+binary or be folded into an aggregated executable that compiles every node's
+cases together. The aggregated binary supplies its own `main()` and defines
+`GTEST_QCNODE` to suppress the local one. A file joins it by appending itself
+to `GTEST_QCNODE_SOURCES` with `PARENT_SCOPE`.
+
+**Cases are grouped by suite name, not by fixture.** `NodeLidar` covers
+behaviour against buffers, `NodeLidarConfig` covers rejection of invalid
+configuration, and `NodeLidarStateMachine` covers lifecycle calls made out of
+order. The lifecycle suite needs no buffers, which makes it the cheapest
+coverage to write first.
+
+**Tests are not registered with CTest.** They are installed into `bin` and run
+on target.

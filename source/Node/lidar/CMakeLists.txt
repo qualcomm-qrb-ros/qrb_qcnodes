@@ -3,10 +3,13 @@
 
 # Scaffolding placeholder: no sources yet. The target will look roughly like
 #
-#   add_library(qrb_qcnode_lidar SHARED
+#   add_library( QCNodeLidar SHARED
 #     Lidar.cpp         # lifecycle entry points and factory function
 #     LidarConfig.cpp   # QCNodeConfigIfs implementation
 #     LidarImpl.cpp     # implementation class, private header LidarImpl.hpp
 #     LidarMonitor.cpp  # QCNodeMonitoringIfs implementation
 #   )
-#   target_include_directories(qrb_qcnode_lidar PUBLIC ${PROJECT_SOURCE_DIR}/include)
+#   target_include_directories( QCNodeLidar PUBLIC ${QRB_QCNODES_ROOT}/include )
+#
+# The target name matters: tests/unit_test/Node/lidar/CMakeLists.txt guards on
+# TARGET QCNodeLidar, so renaming it here silently drops the unit tests.
