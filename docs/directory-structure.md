@@ -25,7 +25,8 @@ qrb_qcnodes/
 │       ├── Base/                Node base classes and factory registration
 │       ├── common/              Helpers shared by all sensor nodes
 │       ├── imu/                 IMU QCNode implementation
-│       └── lidar/               Lidar QCNode implementation
+│       ├── lidar/               Lidar QCNode implementation
+│       └── realsense/           Intel RealSense camera QCNode implementation
 └── tests/
     ├── sample/                  Sample application showing graph integration
     └── unit_test/
@@ -110,7 +111,7 @@ the `CMakeLists.txt` of its parent.
   the factory that maps a node name to its constructor.
 - `source/Node/common/` — helpers shared by the sensor nodes themselves:
   configuration parsing, monitoring counters, and buffer utilities.
-- `source/Node/imu/`, `source/Node/lidar/` — one directory per node. A node
+- `source/Node/imu/`, `source/Node/lidar/`, `source/Node/realsense/` — one directory per node. A node
   directory holds the lifecycle entry points, the implementation class with its
   private header, configuration parsing, and monitoring, each in its own file.
 
