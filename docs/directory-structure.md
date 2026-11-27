@@ -29,6 +29,7 @@ qrb_qcnodes/
 │       └── realsense/           Intel RealSense camera QCNode implementation
 └── tests/
     ├── sample/                  Sample application showing graph integration
+    ├── tools/                   Host-side scripts (RealSense frame/sync report)
     └── unit_test/
         └── Node/
             ├── common/          Unit tests for the shared node helpers

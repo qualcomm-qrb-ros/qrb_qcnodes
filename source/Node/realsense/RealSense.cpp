@@ -87,6 +87,72 @@ QCObjectState_e RealSense::GetState()
     return m_pImpl->GetState();
 }
 
+QCStatus_e RealSense::GetDeviceInfo( RealSenseDeviceInfo_t &info )
+{
+    return m_pImpl->GetDeviceInfo( info );
+}
+
+QCStatus_e RealSense::GetCameraInfo( QCRealSenseStream_e stream, RealSenseCameraInfo_t &info )
+{
+    return m_pImpl->GetCameraInfo( stream, info );
+}
+
+QCStatus_e RealSense::GetExtrinsics( QCRealSenseStream_e from, QCRealSenseStream_e to,
+                                     RealSenseExtrinsics_t &extrinsics )
+{
+    return m_pImpl->GetExtrinsics( from, to, extrinsics );
+}
+
+QCStatus_e RealSense::GetImuInfo( QCRealSenseStream_e stream, RealSenseImuInfo_t &info )
+{
+    return m_pImpl->GetImuInfo( stream, info );
+}
+
+QCStatus_e
+RealSense::GetStaticTransforms( std::vector<QRB::Memory::TransformStamped_t> &transforms )
+{
+    return m_pImpl->GetStaticTransforms( transforms );
+}
+
+QCStatus_e RealSense::GetStaticTransforms( QRB::Memory::TFMessageDescriptor_t &tf )
+{
+    std::vector<QRB::Memory::TransformStamped_t> transforms;
+    QCStatus_e status = m_pImpl->GetStaticTransforms( transforms );
+
+    if ( QC_STATUS_OK == status )
+    {
+        const size_t capacity =
+                ( ( nullptr == tf.pBuf ) || ( tf.offset > tf.size ) )
+                        ? 0u
+                        : ( tf.size - tf.offset ) / sizeof( QRB::Memory::TransformStamped_t );
+        if ( capacity < transforms.size() )
+        {
+            QC_ERROR( "the TF buffer holds %u transforms, %u needed",
+                      static_cast<uint32_t>( capacity ),
+                      static_cast<uint32_t>( transforms.size() ) );
+            status = QC_STATUS_INVALID_BUF;
+        }
+        else
+        {
+            QRB::Memory::TransformStamped_t *pOut =
+                    static_cast<QRB::Memory::TransformStamped_t *>( tf.GetDataPtr() );
+            for ( size_t i = 0; i < transforms.size(); i++ )
+            {
+                pOut[i] = transforms[i];
+            }
+            tf.transformCount = static_cast<uint32_t>( transforms.size() );
+            tf.validSize = transforms.size() * sizeof( QRB::Memory::TransformStamped_t );
+        }
+    }
+
+    return status;
+}
+
+QCStatus_e RealSense::EnumerateDevices( std::vector<RealSenseDeviceInfo_t> &devices )
+{
+    return RealSenseImpl::EnumerateDevices( devices );
+}
+
 QCNodeConfigIfs &RealSense::GetConfigurationIfs()
 {
     return m_configIfs;
