@@ -40,6 +40,7 @@ QCStatus_e Demo::Initialize( QCNodeInit_t &config )
 
     if ( status == QC_STATUS_OK )
     {
+        m_callback = config.callback;
         m_state = QC_OBJECT_STATE_READY;
         QC_INFO( "Demo node initialized" );
     }
@@ -99,10 +100,25 @@ QCStatus_e Demo::ProcessFrameDescriptor( QCFrameDescriptorNodeIfs &frameDesc )
                     "(%.3f, %.3f, %.3f)\n",
                     m_nodeId.name.c_str(), pInput->frameId.CStr(), pInput->childFrameId.CStr(),
                     position.x, position.y, position.z, linear.x, linear.y, linear.z );
+            Publish( *pInput );
         }
     }
 
     return status;
+}
+
+void Demo::Publish( const QRB::Memory::OdometryDescriptor_t &odom )
+{
+    if ( nullptr != m_callback )
+    {
+        QRB::Memory::OdometryDescriptor_t output = odom;
+
+        NodeFrameDescriptor frameDesc( 1 );
+        (void) frameDesc.SetBuffer( kOutputBufferId, output );
+
+        QCNodeEventInfo_t info( frameDesc, m_nodeId, QC_STATUS_OK, QC_OBJECT_STATE_RUNNING );
+        m_callback( info );
+    }
 }
 
 QCStatus_e Demo::Stop()
@@ -129,6 +145,7 @@ QCStatus_e Demo::DeInitialize()
     if ( m_state == QC_OBJECT_STATE_READY )
     {
         status = NodeBase::DeInitialize();
+        m_callback = nullptr;
         m_state = QC_OBJECT_STATE_INITIAL;
     }
     else

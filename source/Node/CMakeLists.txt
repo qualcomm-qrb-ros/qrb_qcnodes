@@ -6,5 +6,6 @@
 
 add_subdirectory(Base)
 add_subdirectory(common)
+add_subdirectory(demo)
 add_subdirectory(imu)
 add_subdirectory(lidar)

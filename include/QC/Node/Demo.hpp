@@ -6,7 +6,13 @@
  * @brief The minimal example QCNode.
  *
  * Demo reads one QRB::Memory::OdometryDescriptor_t from the buffer 0 of the frame descriptor and
- * prints the frames, the position and the linear velocity it carries.
+ * prints the frames, the position and the linear velocity it carries. It then publishes the
+ * odometry (with the frame ids and the pose and twist as received) in the buffer 0 of a frame
+ * descriptor, through the QCNodeInit_t callback, status QC_STATUS_OK. Without a callback nothing is
+ * published.
+ *
+ * The OdometryDescriptor_t holds its values in itself, so the output needs no DMA buffer. The
+ * descriptor in the reported frame is only valid during the callback: copy it to keep it.
  *
  * Example static configuration:
  * @code
@@ -18,6 +24,7 @@
 #define QRB_QC_NODE_DEMO_HPP
 
 #include "QC/Node/NodeBase.hpp"
+#include "QRB/Memory/Navigation/OdometryDescriptor.hpp"
 
 namespace QC
 {
@@ -97,8 +104,15 @@ public:
 private:
     /** @brief The global buffer id of the input OdometryDescriptor_t in the frame descriptor. */
     static constexpr uint32_t kInputBufferId = 0;
+    /** @brief The global buffer id of the published OdometryDescriptor_t in the frame descriptor.
+     */
+    static constexpr uint32_t kOutputBufferId = 0;
+
+    /** @brief Publish @p odom through the callback, if there is one. */
+    void Publish( const QRB::Memory::OdometryDescriptor_t &odom );
 
     DemoConfig m_configIfs;
+    QCNodeEventCallBack_t m_callback;
     DemoMonitoring m_monitorIfs;
     QCObjectState_e m_state;
 };

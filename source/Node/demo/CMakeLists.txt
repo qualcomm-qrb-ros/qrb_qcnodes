@@ -1,4 +1,10 @@
-# Built as part of the qcnode build (see qcnode/source/Node/CMakeLists.txt)
+# Built as part of the qcnode build. It needs the QcNode targets (QCNodeBase), so it drops out
+# when configured on its own, as the unit tests do.
+if( NOT TARGET QCNodeBase )
+    message( STATUS "QCNodeBase not found, the Demo QCNode is not built" )
+    return()
+endif()
+
 set( QRB_QCNODES_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../../include )
 set( QRB_CONTRACTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../qrb_contracts )
 
